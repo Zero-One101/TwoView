@@ -10,7 +10,9 @@ namespace TwoView
 {
     class GBRom
     {
+        private const int bytesPerTile = 16;
         private int gfxOffset = 0x15F34;
+        private const int tilesLength = 256*bytesPerTile;
         private byte[] romData;
 
         public GBRom()
@@ -27,7 +29,7 @@ namespace TwoView
         /// <returns>True if successfully loaded, else false</returns>
         public bool LoadRom()
         {
-            var openFileDialog = new OpenFileDialog()
+            var openFileDialog = new OpenFileDialog
             {
                 AutoUpgradeEnabled = true,
                 Filter = "GB ROM|*.gb",
@@ -36,18 +38,14 @@ namespace TwoView
 
             try
             {
-                if (openFileDialog.ShowDialog() == DialogResult.OK)
+                if (openFileDialog.ShowDialog() != DialogResult.OK) return false;
+                using (var fStream = new FileStream(openFileDialog.FileName, FileMode.Open, FileAccess.Read))
                 {
-                    using (var fStream = new FileStream(openFileDialog.FileName, FileMode.Open, FileAccess.Read))
-                    {
-                        var binReader = new BinaryReader(fStream);
-                        romData = binReader.ReadBytes((int) fStream.Length);
-                    }
-
-                    return true;
+                    var binReader = new BinaryReader(fStream);
+                    romData = binReader.ReadBytes((int) fStream.Length);
                 }
 
-                return false;
+                return true;
             }
             catch (FileNotFoundException)
             {
@@ -57,8 +55,8 @@ namespace TwoView
 
         public byte[] GetGraphicsData()
         {
-            var graphicsData = new byte[256*256];
-            Buffer.BlockCopy(romData, gfxOffset, graphicsData, 0, 256*256);
+            var graphicsData = new byte[tilesLength];
+            Buffer.BlockCopy(romData, gfxOffset, graphicsData, 0, tilesLength);
 
             return graphicsData;
         }
