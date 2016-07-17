@@ -17,7 +17,7 @@ namespace TwoView
         private const int loadedTileSize = 64;
         private const int loadedTilesetSize = loadedTileSize*tilesPerSet;
 
-        private readonly byte[] tileData = new byte[loadedTilesetSize];
+        internal readonly byte[] tileData = new byte[loadedTilesetSize];
 
         /// <summary>
         /// Reads a tileset from ROM
@@ -60,12 +60,14 @@ namespace TwoView
                 offset++;
 
                 // Read the data backwards for simplicity
-                for (var x = 7; x >= 0; x++)
+                for (var x = 7; x >= 0; x--)
                 {
                     tileData[writeOffset + x] = (byte) ((bitplane0 & 0x1) | (bitplane1 & 0x2));
                     bitplane0 >>= 1;
-                    bitplane1 >>= 2;
+                    bitplane1 >>= 1;
                 }
+
+                writeOffset += 8;
             }
         }
     }

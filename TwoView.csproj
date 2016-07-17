@@ -55,6 +55,7 @@
     </Compile>
     <Compile Include="GBRom.cs" />
     <Compile Include="GBTileset.cs" />
+    <Compile Include="MetatileTable.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Form1.resx">

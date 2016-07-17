@@ -11,9 +11,8 @@ namespace TwoView
     class GBRom
     {
         private const int bytesPerTile = 16;
-        private int gfxOffset = 0x15F34;
         private const int tilesLength = 256*bytesPerTile;
-        private byte[] romData;
+        internal byte[] romData;
 
         public GBRom()
         {
@@ -51,14 +50,6 @@ namespace TwoView
             {
                 return false;
             }
-        }
-
-        public byte[] GetGraphicsData()
-        {
-            var graphicsData = new byte[tilesLength];
-            Buffer.BlockCopy(romData, gfxOffset, graphicsData, 0, tilesLength);
-
-            return graphicsData;
         }
     }
 }

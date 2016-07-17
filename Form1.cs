@@ -15,6 +15,7 @@ namespace TwoView
     public partial class Form1 : Form
     {
         private GBRom rom;
+        private int gfxOffset = 0x229BC;
 
         public Form1()
         {
@@ -36,8 +37,10 @@ namespace TwoView
 
         private void btnTest_Click(object sender, EventArgs e)
         {
-            var graphicsData = rom.GetGraphicsData();
-            var buffer = new Bitmap(256, 256, PixelFormat.Format8bppIndexed);
+            var tileSet = new GBTileset();
+            tileSet.ReadTiles(rom.romData, gfxOffset, 0, 256);
+            var graphicsData = tileSet.tileData;
+            var buffer = new Bitmap(8, 256, PixelFormat.Format8bppIndexed);
             var pal = buffer.Palette;
             pal.Entries[0] = Color.Black;
             pal.Entries[1] = Color.White;
@@ -45,11 +48,11 @@ namespace TwoView
             pal.Entries[3] = Color.FromArgb(85, 90, 80);
             buffer.Palette = pal;
 
-            var boundsRect = new Rectangle(0, 0, 256, 256);
+            var boundsRect = new Rectangle(0, 0, 8, 256);
             var bmpData = buffer.LockBits(boundsRect, ImageLockMode.ReadWrite, PixelFormat.Format8bppIndexed);
 
             var ptr = bmpData.Scan0;
-            Marshal.Copy(graphicsData, 0, ptr, graphicsData.Length);
+            Marshal.Copy(graphicsData, 0, ptr, 8*256);
             buffer.UnlockBits(bmpData);
 
             pbxCanvas.Image = buffer;
